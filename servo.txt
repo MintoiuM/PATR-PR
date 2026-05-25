@@ -1,0 +1,30 @@
+void Task_Servomotor(void *params)
+{
+    unsigned int pwmDutyCycle = PWM_CENTER;
+   
+    for (;;)
+    {
+        if(flag)
+        {
+            if (isAutoMode == 1)
+            {
+                if (t <= 20.0) pwmDutyCycle = PWM_MIN;
+                else if (t >= 30.0) pwmDutyCycle = PWM_MAX;
+                else {
+                    pwmDutyCycle = PWM_MIN + (unsigned int)(((t - 20.0) * (PWM_MAX - PWM_MIN)) / 10.0);
+                }
+            }
+            else
+            {
+                if (currentVoltage <= 1.0) pwmDutyCycle = PWM_MIN;
+                else if (currentVoltage >= 3.0) pwmDutyCycle = PWM_MAX;
+                else {
+                    pwmDutyCycle = PWM_MIN + (unsigned int)(((currentVoltage - 1.0) * (PWM_MAX - PWM_MIN)) / 2.0);
+                }
+            }
+           
+            P1DC3 = pwmDutyCycle;
+        }
+        vTaskDelay(100 / portTICK_RATE_MS);
+    }
+}
